@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tirage au sort</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🎯 Tirage au sort</h1>
+    <textarea id="nameInput" placeholder="Entrez un nom par ligne..."></textarea>
+    
+    <div class="buttons">
+      <button onclick="startDraw()">Tirer au sort</button>
+      <button onclick="resetDraw()">Réinitialiser</button>
+    </div>
+
+    <div id="drawResult" class="result">Le nom s'affichera ici</div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
