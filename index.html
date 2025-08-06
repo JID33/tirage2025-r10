@@ -1,24 +1,505 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tirage au sort</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="pageTitle">Our Programs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Removed Inter font, Times New Roman is a common system font -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Times New Roman', serif; /* Changed font to Times New Roman */
+            background-color: #f0f4f8;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            background-image: linear-gradient(to bottom right, #e9ecef, #dee2e6);
+        }
+        .slideshow-container {
+            background-color: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            padding: 40px;
+            width: 100%;
+            max-width: 900px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden; /* Ensure content doesn't overflow during transitions */
+            background-size: cover; /* Cover the entire container */
+            background-position: center; /* Center the background image */
+            transition: background-image 0.8s ease-in-out; /* Smooth transition for background */
+        }
+
+        /* Overlay for text readability */
+        .slideshow-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent dark overlay */
+            border-radius: 24px; /* Match container border-radius */
+            z-index: 1; /* Place above background, below content */
+        }
+
+        .title-container {
+            margin-bottom: 25px;
+            padding: 15px 30px;
+            background-image: linear-gradient(to right, #6366f1, #8b5cf6);
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            color: white;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeInDown 0.8s ease-out; /* Animation for the main title container */
+            z-index: 2; /* Ensure it's above the overlay */
+        }
+        .title-container h1 {
+            font-size: 3.2rem; /* Increased font size */
+            font-weight: 800;
+            margin: 0;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
+            color: white; /* Ensure title inside container is white */
+        }
+        .slide-content {
+            min-height: 350px; /* Ensure consistent height for slides */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* Align content to the top */
+            align-items: center;
+            width: 100%;
+            padding: 20px 0;
+            opacity: 0;
+            transform: translateY(20px); /* Start slightly below for animation */
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+            z-index: 2; /* Ensure content is above the overlay */
+        }
+        .slide-content.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .program-title-box { /* New style for individual program titles */
+            padding: 10px 20px;
+            background-color: rgba(59, 130, 246, 0.8); /* Semi-transparent blue background for program titles */
+            color: white;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.8s ease-out;
+        }
+        .program-title-box h2 {
+            font-size: 2.6rem; /* Increased font size */
+            font-weight: 800;
+            margin: 0; /* Remove default margin from h2 */
+            color: white; /* Ensure title inside box is white */
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        .definition {
+            font-size: 1.3rem; /* Increased font size */
+            color: white; /* Changed to white for better contrast on image */
+            line-height: 1.6;
+            margin-bottom: 20px;
+            max-width: 700px;
+            animation: fadeIn 1s ease-out; /* Animation for definition */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7); /* Text shadow for readability */
+        }
+        .key-points {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            text-align: left;
+            width: 100%;
+            max-width: 600px;
+            animation: fadeIn 1.2s ease-out; /* Animation for key points */
+        }
+        .key-points li {
+            font-size: 1.15rem; /* Increased font size */
+            color: white; /* Changed to white for better contrast on image */
+            margin-bottom: 8px;
+            padding-left: 25px;
+            position: relative;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7); /* Text shadow for readability */
+        }
+        .key-points li::before {
+            content: '•'; /* Bullet point */
+            color: #3b82f6; /* Blue bullet */
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+            position: absolute;
+            left: 0;
+            text-shadow: none; /* Remove shadow from bullet */
+        }
+        .nav-button {
+            background-image: linear-gradient(to bottom right, #6366f1, #8b5cf6);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 12px;
+            font-size: 1.2rem; /* Increased font size */
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin: 0 10px;
+            cursor: pointer;
+            border: none;
+            z-index: 2; /* Ensure it's above the overlay */
+        }
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        .nav-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        /* Removed .back-button styling as the button itself is removed */
+        @media (max-width: 768px) {
+            .slideshow-container {
+                padding: 30px;
+            }
+            .title-container h1 {
+                font-size: 2.2rem; /* Adjusted for smaller screens */
+            }
+            .program-title-box h2 {
+                font-size: 2rem; /* Adjusted for smaller screens */
+            }
+            .definition, .key-points li {
+                font-size: 1.1rem; /* Adjusted for smaller screens */
+            }
+            .nav-button { /* Adjusted for smaller screens */
+                padding: 10px 20px;
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Keyframe Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Language Selector specific styling */
+        #languageSelector {
+            padding: 6px 10px; /* Reduced padding */
+            font-size: 0.9rem; /* Reduced font size */
+            border-radius: 8px; /* Slightly smaller border-radius */
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🎯 Tirage au sort</h1>
-    <textarea id="nameInput" placeholder="Entrez un nom par ligne..."></textarea>
-    
-    <div class="buttons">
-      <button onclick="startDraw()">Tirer au sort</button>
-      <button onclick="resetDraw()">Réinitialiser</button>
+    <div id="slideshowContainer" class="slideshow-container">
+        <!-- Language Selector -->
+        <div class="absolute top-4 right-4 z-10">
+            <select id="languageSelector" class="p-2 rounded-md border border-gray-300 bg-white shadow-sm">
+                <option value="en" selected>English</option>
+                <option value="fr">Français</option>
+                <option value="es">Español</option>
+                <option value="ht">Kreyòl Ayisyen</option>
+            </select>
+        </div>
+
+        <div class="title-container">
+            <h1 data-i18n="mainTitle">Our Programs</h1>
+        </div>
+
+        <div id="slideContent" class="slide-content">
+            <!-- Program content will be loaded here by JavaScript -->
+        </div>
+
+        <div class="flex justify-center mt-8">
+            <button id="prevBtn" class="nav-button" data-i18n="prevButton">Previous</button>
+            <button id="nextBtn" class="nav-button" data-i18n="nextButton">Next</button>
+        </div>
+
+        <!-- The "Back to Flyer" button has been removed as requested -->
     </div>
 
-    <div id="drawResult" class="result">Le nom s'affichera ici</div>
-  </div>
+    <script>
+        const translations = {
+            en: {
+                mainTitle: "Our Programs",
+                prevButton: "Previous",
+                nextButton: "Next",
+                backButton: "Back to Flyer", // Kept in translations but not used in HTML
+                program1Title: "1. INVESTMENT PROGRAM",
+                program1Definition: "A structured initiative designed to help individuals or groups invest money wisely to generate financial returns or long-term benefits.",
+                program1KeyPoints: [
+                    "Encourages financial contribution into specific ventures",
+                    "Aims to grow capital through strategic reinvestment",
+                    "Can include rewards, dividends, or profit-sharing",
+                    "Tracks participant investment and performance",
+                    "May support community, cooperative, or individual goals"
+                ],
+                program2Title: "2. BUSINESS DEVELOPMENT PROGRAM",
+                program2Definition: "A program focused on building, improving, and expanding businesses through education, tools, resources, and strategic support.",
+                program2KeyPoints: [
+                    "Offers training in business planning, marketing, and operations",
+                    "Supports startups and small business growth",
+                    "Includes mentorship and access to business tools",
+                    "Helps participants identify opportunities and manage risks",
+                    "May provide access to funding or partnerships"
+                ],
+                program3Title: "3. SALES AND SALES PROMOTION PROGRAM",
+                program3Definition: "A strategy-focused program aimed at increasing product or service sales through active promotion and selling techniques.",
+                program3KeyPoints: [
+                    "Trains participants in sales skills and communication",
+                    "Develops campaigns to attract and retain customers",
+                    "Uses discounts, bonuses, contests, or rewards to boost sales",
+                    "Tracks customer behavior and purchasing patterns",
+                    "Helps increase visibility, engagement, and revenue"
+                ],
+                program4Title: "4. APPRENTICESHIP PROGRAM",
+                program4Definition: "A hands-on training program that combines practical experience with learning, helping individuals gain skills in a real working environment.",
+                program4KeyPoints: [
+                    "Ideal for beginners or youth with little/no work experience",
+                    "Provides mentorship and on-the-job practice",
+                    "Focuses on skill-building and personal development",
+                    "Often leads to employment or entrepreneurship",
+                    "Can be part of a cooperative or social enterprise program"
+                ]
+            },
+            fr: {
+                mainTitle: "Nos Programmes",
+                prevButton: "Précédent",
+                nextButton: "Suivant",
+                backButton: "Retour au Flyer", // Kept in translations but not used in HTML
+                program1Title: "1. PROGRAMME D'INVESTISSEMENT",
+                program1Definition: "Une initiative structurée conçue pour aider les individus ou les groupes à investir de l'argent judicieusement afin de générer des rendements financiers ou des avantages à long terme.",
+                program1KeyPoints: [
+                    "Encourage la contribution financière dans des projets spécifiques",
+                    "Vise à faire croître le capital par un réinvestissement stratégique",
+                    "Peut inclure des récompenses, des dividendes ou le partage des bénéfices",
+                    "Suit l'investissement et la performance des participants",
+                    "Peut soutenir des objectifs communautaires, coopératifs ou individuels"
+                ],
+                program2Title: "2. PROGRAMME DE DÉVELOPPEMENT DES AFFAIRES",
+                program2Definition: "Un programme axé sur la création, l'amélioration et l'expansion des entreprises par l'éducation, les outils, les ressources et le soutien stratégique.",
+                program2KeyPoints: [
+                    "Offre une formation en planification d'entreprise, marketing et opérations",
+                    "Soutient la croissance des startups et des petites entreprises",
+                    "Comprend du mentorat et l'accès à des outils commerciaux",
+                    "Aide les participants à identifier les opportunités et à gérer les risques",
+                    "Peut fournir un accès à des financements ou des partenariats"
+                ],
+                program3Title: "3. PROGRAMME DE VENTES ET DE PROMOTION DES VENTES",
+                program3Definition: "Un programme axé sur la stratégie visant à augmenter les ventes de produits ou de services grâce à des techniques de promotion et de vente actives.",
+                program3KeyPoints: [
+                    "Forme les participants aux techniques de vente et de communication",
+                    "Développe des campagnes pour attirer et fidéliser les clients",
+                    "Utilise des réductions, des bonus, des concours ou des récompenses pour stimuler les ventes",
+                    "Suit le comportement des clients et les habitudes d'achat",
+                    "Aide à augmenter la visibilité, l'engagement et les revenus"
+                ],
+                program4Title: "4. PROGRAMME D'APPRENTISSAGE",
+                program4Definition: "Un programme de formation pratique qui combine l'expérience pratique avec l'apprentissage, aidant les individus à acquérir des compétences dans un environnement de travail réel.",
+                program4KeyPoints: [
+                    "Idéal pour les débutants ou les jeunes ayant peu ou pas d'expérience professionnelle",
+                    "Fournit du mentorat et de la pratique sur le terrain",
+                    "Se concentre sur le développement des compétences et le développement personnel",
+                    "Mène souvent à l'emploi ou à l'entrepreneuriat",
+                    "Peut faire partie d'un programme coopératif ou d'entreprise sociale"
+                ]
+            },
+            es: {
+                mainTitle: "Nuestros Programas",
+                prevButton: "Anterior",
+                nextButton: "Siguiente",
+                backButton: "Volver al Folleto", // Kept in translations but not used in HTML
+                program1Title: "1. PROGRAMA DE INVERSIÓN",
+                program1Definition: "Una iniciativa estructurada diseñada para ayudar a individuos o grupos a invertir dinero sabiamente para generar retornos financieros o beneficios a largo plazo.",
+                program1KeyPoints: [
+                    "Fomenta la contribución financiera en proyectos específicos",
+                    "Tiene como objetivo hacer crecer el capital a través de la reinversión estratégica",
+                    "Puede incluir recompensas, dividendos o participación en las ganancias",
+                    "Rastrea la inversión y el rendimiento de los participantes",
+                    "Puede apoyar objetivos comunitarios, cooperativos o individuales"
+                ],
+                program2Title: "2. PROGRAMA DE DESARROLLO EMPRESARIAL",
+                program2Definition: "Un programa enfocado en construir, mejorar y expandir negocios a través de educación, herramientas, recursos y apoyo estratégico.",
+                program2KeyPoints: [
+                    "Ofrece capacitación en planificación empresarial, marketing y operaciones",
+                    "Apoya el crecimiento de startups y pequeñas empresas",
+                    "Incluye mentoría y acceso a herramientas empresariales",
+                    "Ayuda a los participantes a identificar oportunidades y gestionar riesgos",
+                    "Puede proporcionar acceso a financiación o asociaciones"
+                ],
+                program3Title: "3. PROGRAMA DE VENTAS Y PROMOCIÓN DE VENTAS",
+                program3Definition: "Un programa estratégico destinado a aumentar las ventas de productos o servicios a través de técnicas activas de promoción y venta.",
+                program3KeyPoints: [
+                    "Capacita a los participantes en habilidades de ventas y comunicación",
+                    "Desarrolla campañas para atraer y retener clientes",
+                    "Utiliza descuentos, bonificaciones, concursos o recompensas para impulsar las ventas",
+                    "Rastrea el comportamiento del cliente y los patrones de compra",
+                    "Ayuda a aumentar la visibilidad, el compromiso y los ingresos"
+                ],
+                program4Title: "4. PROGRAMA DE APRENDIZAJE",
+                program4Definition: "Un programa de capacitación práctica que combina la experiencia práctica con el aprendizaje, ayudando a las personas a adquirir habilidades en un entorno de trabajo real.",
+                program4KeyPoints: [
+                    "Ideal para principiantes o jóvenes con poca o ninguna experiencia laboral",
+                    "Proporciona mentoría y práctica en el puesto de trabajo",
+                    "Se enfoca en el desarrollo de habilidades y el desarrollo personal",
+                    "A menudo conduce al empleo o al emprendimiento",
+                    "Puede ser parte de un programa cooperativo o de empresa social"
+                ]
+            },
+            ht: {
+                mainTitle: "Pwogram Nou Yo",
+                prevButton: "Anvan",
+                nextButton: "Pwochen",
+                backButton: "Retounen nan Flyer la", // Kept in translations but not used in HTML
+                program1Title: "1. PWOGRAM ENVESTISMAN",
+                program1Definition: "Yon inisyativ estriktire ki fèt pou ede moun oswa gwoup envesti lajan avèk sajès pou jenere pwofi finansye oswa benefis alontèm.",
+                program1KeyPoints: [
+                    "Ankouraje kontribisyon finansye nan pwojè espesifik",
+                    "Vize pou fè kapital grandi atravè re-envestisman estratejik",
+                    "Ka gen ladan rekonpans, dividann, oswa pataj pwofi",
+                    "Swiv envestisman ak pèfòmans patisipan yo",
+                    "Ka sipòte objektif kominotè, koperativ, oswa endividyèl"
+                ],
+                program2Title: "2. PWOGRAM DEVLOPMAN BIZNIS",
+                program2Definition: "Yon pwogram ki konsantre sou bati, amelyore, ak elaji biznis atravè edikasyon, zouti, resous, ak sipò estratejik.",
+                program2KeyPoints: [
+                    "Ofri fòmasyon nan planifikasyon biznis, maketing, ak operasyon",
+                    "Sipòte kwasans demaraj ak ti biznis",
+                    "Gen ladan konsèy ak aksè a zouti biznis",
+                    "Ede patisipan yo idantifye opòtinite ak jere risk",
+                    "Ka bay aksè a finansman oswa patenarya"
+                ],
+                program3Title: "3. PWOGRAM VANN AK PWOMOSYON VANN",
+                program3Definition: "Yon pwogram ki konsantre sou estrateji ki vize ogmante lavant pwodwi oswa sèvis atravè pwomosyon aktif ak teknik vann.",
+                program3KeyPoints: [
+                    "Fòme patisipan yo nan ladrès vann ak kominikasyon",
+                    "Devlope kanpay pou atire ak kenbe kliyan",
+                    "Itilize rabè, bonis, konkou, oswa rekonpans pou ogmante lavant",
+                    "Swiv konpòtman kliyan ak modèl achte",
+                    "Ede ogmante vizibilite, angajman, ak revni"
+                ],
+                program4Title: "4. PWOGRAM APRANTISAJ",
+                program4Definition: "Yon pwogram fòmasyon pratik ki konbine eksperyans pratik ak aprantisaj, ki ede moun jwenn ladrès nan yon anviwònman travay reyèl.",
+                program4KeyPoints: [
+                    "Ideal pou debutan oswa jèn ki gen ti eksperyans travay oswa pa gen ditou",
+                    "Bay konsèy ak pratik sou travay la",
+                    "Konsantre sou devlopman ladrès ak devlopman pèsonèl",
+                    "Mène souvent à l'emploi ou à l'entrepreneuriat",
+                    "Ka fè pati d'un programme coopératif ou d'entreprise sociale"
+                ]
+            }
+        };
 
-  <script src="script.js"></script>
+        let currentLanguage = 'en';
+        let currentSlideIndex = 0;
+
+        const slideshowContainer = document.getElementById('slideshowContainer');
+        const slideContentDiv = document.getElementById('slideContent');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const languageSelector = document.getElementById('languageSelector');
+
+        const programs = [
+            { id: 'program1', titleKey: 'program1Title', definitionKey: 'program1Definition', keyPointsKey: 'program1KeyPoints', bgImageUrl: 'https://i.postimg.cc/YSCNq66V/download.jpg' },
+            { id: 'program2', titleKey: 'program2Title', definitionKey: 'program2Definition', keyPointsKey: 'program2KeyPoints', bgImageUrl: 'https://i.postimg.cc/4ygmnZCd/download-1.jpg' },
+            { id: 'program3', titleKey: 'program3Title', definitionKey: 'program3Definition', keyPointsKey: 'program3KeyPoints', bgImageUrl: 'https://i.postimg.cc/0QpyT36q/download-2.jpg' },
+            { id: 'program4', titleKey: 'program4Title', definitionKey: 'program4Definition', keyPointsKey: 'program4KeyPoints', bgImageUrl: 'https://i.postimg.cc/pdjWj7Jn/images-3.jpg' }
+        ];
+
+        /**
+         * Sets the language of the application.
+         * @param {string} lang - The language code ('en', 'fr', 'es', 'ht').
+         */
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            document.documentElement.lang = lang;
+
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    element.innerHTML = translations[lang][key]; // Use innerHTML for potential HTML entities like &copy;
+                }
+            });
+            showSlide(currentSlideIndex); // Re-render current slide with new language
+        }
+
+        /**
+         * Displays the specified slide content.
+         * @param {number} index - The index of the slide to display.
+         */
+        function showSlide(index) {
+            if (index < 0) {
+                currentSlideIndex = programs.length - 1;
+            } else if (index >= programs.length) {
+                currentSlideIndex = 0;
+            } else {
+                currentSlideIndex = index;
+            }
+
+            const program = programs[currentSlideIndex];
+
+            // Update background image of the slideshow container
+            slideshowContainer.style.backgroundImage = `url('${program.bgImageUrl}')`;
+
+            const slideHtml = `
+                <div class="program-title-box">
+                    <h2 data-i18n="${program.titleKey}">${translations[currentLanguage][program.titleKey]}</h2>
+                </div>
+                <p class="definition" data-i18n="${program.definitionKey}">${translations[currentLanguage][program.definitionKey]}</p>
+                <ul class="key-points">
+                    ${translations[currentLanguage][program.keyPointsKey].map(point => `<li>${point}</li>`).join('')}
+                </ul>
+            `;
+
+            // Apply fade-out effect
+            slideContentDiv.classList.remove('active');
+            setTimeout(() => {
+                slideContentDiv.innerHTML = slideHtml;
+                // Apply fade-in effect
+                slideContentDiv.classList.add('active');
+            }, 500); // Match CSS transition duration
+        }
+
+        /**
+         * Navigates to the next slide.
+         */
+        function nextSlide() {
+            showSlide(currentSlideIndex + 1);
+        }
+
+        /**
+         * Navigates to the previous slide.
+         */
+        function prevSlide() {
+            showSlide(currentSlideIndex - 1);
+        }
+
+        // Event Listeners
+        prevBtn.addEventListener('click', prevSlide);
+        nextBtn.addEventListener('click', nextSlide);
+        languageSelector.addEventListener('change', (event) => setLanguage(event.target.value));
+
+        // Initial load
+        window.onload = () => {
+            setLanguage('en'); // Set default language on load
+            showSlide(currentSlideIndex); // Display the first slide
+        };
+    </script>
 </body>
 </html>
